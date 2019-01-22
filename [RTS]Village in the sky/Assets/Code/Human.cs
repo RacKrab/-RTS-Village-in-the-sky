@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using UnityEngine;
 
 namespace Village
 {
-    class Human
+    public class Human : MonoBehaviour
     {
-        private static Random random = new Random();
         public readonly string Name;
         public int Age { get; private set; }
         public char Gender { get; private set; }
@@ -27,11 +23,11 @@ namespace Village
 
             if (gender == 'm')
             {
-                return male[random.Next(male.Length)];
+                return male[Random.Range(0,male.Length)];
             }
             else if (gender == 'f')
             {
-                return male[random.Next(female.Length)];
+                return female[Random.Range(0, female.Length)];
             }
             else
             {
@@ -41,7 +37,7 @@ namespace Village
 
         private static char RandomGender()
         {
-            int check = random.Next(1);
+            int check = Random.Range(0,1);
 
             if (check == 0)
             {

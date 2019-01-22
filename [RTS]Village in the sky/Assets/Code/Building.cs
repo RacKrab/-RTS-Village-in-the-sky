@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Village
 {
-    public abstract class Building
+    public abstract class Building : MonoBehaviour
     {
         private List<Human> workers;
         protected int CurrentSize { get; set; }
@@ -34,40 +32,40 @@ namespace Village
 
 
 
-    class Mill : Building
-    {
-        public Mill()
-        {
-            CurrentSize = 3;
-        }
+    //public class Mill : Building
+    //{
+    //    public Mill()
+    //    {
+    //        CurrentSize = 3;
+    //    }
 
-        public override void Work()
-        {
-            Console.WriteLine("Mill work.");
-        }
-    }
+    //    public override void Work()
+    //    {
 
-    class Hut : Building
-    {
-        public Hut()
-        {
-            CurrentSize = 2;
-        }
-        public override void Work()
-        {
-            Console.WriteLine("It is hut , it is can not work.");
-        }
-    }
+    //    }
+    //}
 
-    class Wheat : Building
-    {
-        public Wheat()
-        {
-            CurrentSize = 1;
-        }
-        public override void Work()
-        {
-            Console.WriteLine("Wheat work.");
-        }
-    }
+    //public class Hut : Building
+    //{
+    //    public Hut()
+    //    {
+    //        CurrentSize = 2;
+    //    }
+    //    public override void Work()
+    //    {
+
+    //    }
+    //}
+
+    //public class Wheat : Building
+    //{
+    //    public Wheat()
+    //    {
+    //        CurrentSize = 1;
+    //    }
+    //    public override void Work()
+    //    {
+
+    //    }
+    //}
 }
