@@ -5,23 +5,19 @@ namespace BuildSpace
     public class LocalChangeMaterial : MonoBehaviour
     {
         private Material material;
-        private bool LoopStop { get; set; }
+        private bool stopWork;
 
         private void Start()
         {
             material = Resources.Load("ThatchRoof", typeof(Material)) as Material;
-            LoopStop = true;
         }
 
         void Update()
         {
-            if (Builder.StopFlag && LoopStop)
+            if (BuildingController.StopFlag && !stopWork)
             {
                 gameObject.GetComponent<MeshRenderer>().material = material;
-                //Builder.ChangeFlag = false;
-                Debug.Log(Builder.StopFlag);
-                LoopStop = false;
-                //enabled = false;
+                stopWork = true;
             }
         }
     }
