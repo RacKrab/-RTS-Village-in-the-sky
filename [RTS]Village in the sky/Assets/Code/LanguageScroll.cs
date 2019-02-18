@@ -14,16 +14,18 @@ public class LanguageScroll : MonoBehaviour
 
     private int nearestTextID; // Номер центрального элемента
 
-    public static string CurrentLanguage;//!!!!!Удалить , это мусор
-
     private bool isScrolling;
+    private float sizeDelta;
 
+    private Text newObject;
     private Text[] instObjects; //Объекты
-    private Vector2[] scaleObjects; // Размеры объектов
+    private Transform[] positionObjects;
 
-
-    private Text localSaveText;
-    private Color color; //Цвет
+    private Vector2 positionVector;
+    private Vector2 scaleVector; // Размеры объектов
+    private Transform savePosition;
+    private Text saveText;
+    private Color color;
     private RectTransform anchoredContentPosition;
     private Vector2 contentVector;
 
@@ -32,13 +34,14 @@ public class LanguageScroll : MonoBehaviour
 
     void Start()
     {
-        CountriesName = new string[] { "Français", "English", "Русский", "Беларускі" , "中文(BETA)" };
+        CountriesName = new string[] { "Français", "English", "Русский", "Беларускі", "中文(BETA)" };
 
         color = new Color(0.7f, 0.7f, 0.7f, 0f);
-
         anchoredContentPosition = GetComponent<RectTransform>();
+        sizeDelta = text.GetComponent<RectTransform>().sizeDelta.y;
+
         instObjects = new Text[CountriesName.Length];
-        scaleObjects = new Vector2[CountriesName.Length];
+        positionObjects = new Transform[CountriesName.Length];
 
         StartInitObjects();
     }
@@ -53,13 +56,14 @@ public class LanguageScroll : MonoBehaviour
 
             if (i == 0)
             {
-                instObjects[0].transform.localPosition = new Vector2(instObjects[0].transform.localPosition.x, -text.GetComponent<RectTransform>().sizeDelta.y * (CountriesName.Length / 2));
+                instObjects[0].transform.localPosition = new Vector2(instObjects[0].transform.localPosition.x, -sizeDelta * (CountriesName.Length / 2));
+                positionObjects[0] = instObjects[0].transform;
                 continue;
             }
 
 
-            instObjects[i].transform.localPosition = new Vector2(instObjects[i].transform.localPosition.x, // При инициализации объекта изменяем позицию
-                instObjects[i - 1].transform.localPosition.y + text.GetComponent<RectTransform>().sizeDelta.y);
+            instObjects[i].transform.localPosition = new Vector2(instObjects[i].transform.localPosition.x, instObjects[i - 1].transform.localPosition.y + sizeDelta);
+            positionObjects[i] = instObjects[i].transform;
         }
     }
 
@@ -69,38 +73,45 @@ public class LanguageScroll : MonoBehaviour
         ChangeColorObjects();
         if (!isScrolling) AnchoredPositionToNearest();
         LoopScroll();
-        CurrentLanguage = instObjects[nearestTextID].text;//!!!!!Удалить , это мусор
-        Debug.Log(CurrentLanguage);//!!!!!Удалить , это мусор
     }
 
     private void LoopScroll()
     {
         if (nearestTextID == 0)
         {
-            instObjects[CountriesName.Length - 1].transform.localPosition = new Vector2(instObjects[CountriesName.Length - 1].transform.localPosition.x,
-                instObjects[0].transform.localPosition.y - text.GetComponent<RectTransform>().sizeDelta.y); //* (CountriesName.Length / 2) если всего три переменные(объекта Text) , то последнюю переменную следует домножить на хуету в скобках, будет плавнее
+            positionVector.x = positionObjects[CountriesName.Length - 1].localPosition.x;
+            positionVector.y = positionObjects[0].localPosition.y - sizeDelta;
+            positionObjects[CountriesName.Length - 1].localPosition = positionVector;
 
-            localSaveText = instObjects[CountriesName.Length - 1];
+            savePosition = positionObjects[CountriesName.Length - 1];
+            saveText = instObjects[CountriesName.Length - 1];
 
             for (int c = CountriesName.Length - 1; c > 0; c--)
             {
+                positionObjects[c] = positionObjects[c - 1];
                 instObjects[c] = instObjects[c - 1];
             }
 
-            instObjects[0] = localSaveText;
+            positionObjects[0] = savePosition;
+            instObjects[0] = saveText;
         }
         else if (nearestTextID == CountriesName.Length - 1)
         {
-            instObjects[0].transform.localPosition = new Vector2(instObjects[0].transform.localPosition.x,
-                 instObjects[CountriesName.Length - 1].transform.localPosition.y + text.GetComponent<RectTransform>().sizeDelta.y); //* (CountriesName.Length / 2) если всего три переменные(объекта Text) , то последнюю переменную следует домножить на хуету в скобках, будет плавнее
-            localSaveText = instObjects[0];
+            positionVector.x = positionObjects[0].localPosition.x;
+            positionVector.y = positionObjects[CountriesName.Length - 1].localPosition.y + sizeDelta;
+            positionObjects[0].localPosition = positionVector;
+
+            savePosition = positionObjects[0];
+            saveText = instObjects[0];
 
             for (int c = 0; c < CountriesName.Length - 1; c++)
             {
+                positionObjects[c] = positionObjects[c + 1];
                 instObjects[c] = instObjects[c + 1];
             }
 
-            instObjects[CountriesName.Length - 1] = localSaveText;
+            positionObjects[CountriesName.Length - 1] = savePosition;
+            instObjects[CountriesName.Length - 1] = saveText;
         }
     }
 
@@ -110,7 +121,7 @@ public class LanguageScroll : MonoBehaviour
 
         for (int i = 0; i < CountriesName.Length; i++)
         {
-            float currentPosition = Mathf.Abs(anchoredContentPosition.anchoredPosition.y + instObjects[i].transform.localPosition.y);
+            float currentPosition = Mathf.Abs(anchoredContentPosition.anchoredPosition.y + positionObjects[i].localPosition.y);
 
             if (nearestPosition > currentPosition)
             {
@@ -124,9 +135,11 @@ public class LanguageScroll : MonoBehaviour
     private void ChangeSizeObjects(int i, float currentPosition)
     {
         float scale = Mathf.Clamp(1 / (currentPosition) * rangeScaleChanges, 0.5f, 1f);
-        scaleObjects[i].x = Mathf.SmoothStep(instObjects[i].transform.localScale.x, scale, speedChangedSize * Time.deltaTime);
-        scaleObjects[i].y = Mathf.SmoothStep(instObjects[i].transform.localScale.y, scale, speedChangedSize * Time.deltaTime);
-        instObjects[i].transform.localScale = scaleObjects[i];
+
+        scaleVector.x = Mathf.SmoothStep(positionObjects[i].localScale.x, scale, speedChangedSize * Time.deltaTime);
+        scaleVector.y = Mathf.SmoothStep(positionObjects[i].localScale.y, scale, speedChangedSize * Time.deltaTime);
+
+        positionObjects[i].localScale = scaleVector;
     }
 
     private void ChangeColorObjects()
@@ -160,13 +173,13 @@ public class LanguageScroll : MonoBehaviour
             }
 
             color.a = 0f;
-            instObjects[k].color = Color.Lerp(instObjects[k].color, color, speedChangedColor * Time.deltaTime); // Нужно подумать над скоростью, возможно стоит вынести в отдельную переменную 
+            instObjects[k].color = Color.Lerp(instObjects[k].color, color, speedChangedColor * Time.deltaTime);
         }
     }
 
     private void AnchoredPositionToNearest()
     {
-        contentVector.y = Mathf.SmoothStep(anchoredContentPosition.anchoredPosition.y, -instObjects[nearestTextID].transform.localPosition.y, speedChangedSize * Time.deltaTime);
+        contentVector.y = Mathf.SmoothStep(anchoredContentPosition.anchoredPosition.y, -positionObjects[nearestTextID].localPosition.y, speedChangedSize * Time.deltaTime);
         anchoredContentPosition.anchoredPosition = contentVector;
     }
 
