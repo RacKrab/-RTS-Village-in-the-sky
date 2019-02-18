@@ -21,7 +21,6 @@ public class LanguageScroll : MonoBehaviour
     private Text[] instObjects; //Объекты
     private Transform[] positionObjects;
 
-
     private Vector2 positionVector;
     private Vector2 scaleVector; // Размеры объектов
     private Transform savePosition;
@@ -38,8 +37,9 @@ public class LanguageScroll : MonoBehaviour
         CountriesName = new string[] { "Français", "English", "Русский", "Беларускі", "中文(BETA)" };
 
         color = new Color(0.7f, 0.7f, 0.7f, 0f);
-        sizeDelta = text.GetComponent<RectTransform>().sizeDelta.y;
         anchoredContentPosition = GetComponent<RectTransform>();
+        sizeDelta = text.GetComponent<RectTransform>().sizeDelta.y;
+
         instObjects = new Text[CountriesName.Length];
         positionObjects = new Transform[CountriesName.Length];
 
