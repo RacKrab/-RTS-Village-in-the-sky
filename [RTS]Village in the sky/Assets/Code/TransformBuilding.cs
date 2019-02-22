@@ -10,9 +10,10 @@ namespace BuildSpace
         private Ray ray;
         private RaycastHit hit;
         private Touch touch;
-       // private Input touch;
+        // private Input touch;
+        //Всю эту залупу нужно начисто переписывать, говнокод
 
-            //Нужно привязывать позицию дома к позиции пальца, чтобы дом не мог выскользнуть из под мыши
+        //Нужно привязывать позицию дома к позиции пальца, чтобы дом не мог выскользнуть из под мыши
 
         private bool firstTouchFlag;
         private bool stopReadingTouch;
@@ -26,7 +27,7 @@ namespace BuildSpace
 
         private void Start()
         {
-            gameObject.transform.position = new Vector3(0f,0.5f,0f);
+            gameObject.transform.position = new Vector3(0f, 0.5f, 0f);
         }
 
         //private void Update()
@@ -65,11 +66,11 @@ namespace BuildSpace
 
         private void Update()
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 checkPC = true;
             }
-            else if(Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0))
             {
                 checkPC = false;
             }
@@ -81,8 +82,9 @@ namespace BuildSpace
 
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.collider.name == gameObject.name)
+                    if (hit.collider.name == gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
                     {
+
 
                         if (!firstTouchFlag)
                         {
@@ -102,6 +104,20 @@ namespace BuildSpace
                     {
                         firstTouchFlag = false;
                     }
+
+                    //Переписать скрипт без всяких трансформ позишон и прочьего говна
+                    //Всю эту залупу нужно начисто переписывать, говнокод
+                    position = gameObject.transform.localPosition;
+                    Debug.Log("1");
+                    if (Physics.Raycast(position + transform.up, -Vector3.up, out hit))
+                    {
+                        Debug.Log("2");
+                        if (hit.collider.name == "Island")
+                        {
+                            Debug.Log("ZAEBIS");
+                        }
+                    }
+
                 }
             }
         } // VERSION FOR PC INSERT

@@ -21,6 +21,7 @@ namespace BuildSpace
 
         public void EndBuild()
         { // нужна какая то проверка, сейчас можно вызвать слишком много корутинов
+            //Нужна проверка, был ли инициализирован объект, в противнои случае пошли нахуй
             working = false;
             StopFlag = true;
             Invoke("WaitChangeMaterials", 0.1f);
