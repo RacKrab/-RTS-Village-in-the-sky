@@ -77,9 +77,10 @@ namespace BuildSpace
             if (Input.GetMouseButtonUp(0)) checkPC = false;
 
             if (!checkPC) return;
+
             ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out hit) && Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
+            if(Physics.Raycast(ray, out hit))
             {
                 if (hit.collider.name != gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
                 {
@@ -87,24 +88,26 @@ namespace BuildSpace
                     firstTouchFlag = false;
                     return;
                 }
+            }
 
+            if (Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
+            {
                 if (hitBottom.collider.name != "Island") return;
 
                 if (!firstTouchFlag)
                 {
                     firstFingerPosition = hit.point;
                     firstTouchFlag = true;
+                    position = gameObject.transform.position;
                     return;
                 }
-
-                secondFingerPosition = hit.point;
-                shiftPositionVector = secondFingerPosition - firstFingerPosition;
-                shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
-                gameObject.transform.position += shiftPositionVector;
-                firstFingerPosition = hit.point;
-
-                position = gameObject.transform.position;
             }
+
+            secondFingerPosition = hit.point;
+            shiftPositionVector = secondFingerPosition - firstFingerPosition;
+            shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
+            gameObject.transform.position += shiftPositionVector;
+            firstFingerPosition = hit.point;
         } // VERSION FOR PC INSERT
     }
 
