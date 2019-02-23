@@ -16,9 +16,13 @@ namespace BuildSpace
 
         //Нужно привязывать позицию дома к позиции пальца, чтобы дом не мог выскользнуть из под мыши
 
+        //Переписать скрипт без всяких трансформ позишон и прочьего говна
+        //Всю эту залупу нужно начисто переписывать, говнокод
+
+
+
         private bool firstTouchFlag;
         private bool stopReadingTouch;
-
         private Vector3 position;
 
         private Vector3 shiftPositionVector;
@@ -69,61 +73,162 @@ namespace BuildSpace
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                checkPC = true;
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                checkPC = false;
-            }
-            if (checkPC)
-            {
-                position = Input.mousePosition;
-                //touch = Input.mousePosition;
-                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Input.GetMouseButtonDown(0)) checkPC = true;
+            if (Input.GetMouseButtonUp(0)) checkPC = false;
 
-                if (Physics.Raycast(ray, out hit))
+            if (!checkPC) return;
+
+            position = Input.mousePosition;
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.name == gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
                 {
-                    if (hit.collider.name == gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
+                    position = gameObject.transform.position;
+                    if (Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
                     {
-                        position = gameObject.transform.position;
-                        if (Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
+                        if (hitBottom.collider.name == "Island")
                         {
-                            if (hitBottom.collider.name == "Island")
+                            if (!firstTouchFlag)
                             {
-                                if (!firstTouchFlag)
-                                {
-                                    firstFingerPosition = hit.point;
-                                    firstTouchFlag = true;
-                                }
-                                else
-                                {
-                                    secondFingerPosition = hit.point;
-                                    shiftPositionVector = secondFingerPosition - firstFingerPosition;
-                                    shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
-                                    gameObject.transform.position += shiftPositionVector;
-                                    firstFingerPosition = hit.point;
-                                }
+                                firstFingerPosition = hit.point;
+                                firstTouchFlag = true;
                             }
-                        }
-                        else
-                        {
-
+                            else
+                            {
+                                secondFingerPosition = hit.point;
+                                shiftPositionVector = secondFingerPosition - firstFingerPosition;
+                                shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
+                                gameObject.transform.position += shiftPositionVector;
+                                firstFingerPosition = hit.point;
+                            }
                         }
                     }
                     else
                     {
-                        firstTouchFlag = false;
+
                     }
-
-                    //Переписать скрипт без всяких трансформ позишон и прочьего говна
-                    //Всю эту залупу нужно начисто переписывать, говнокод
-
                 }
+                else
+                {
+                    firstTouchFlag = false;
+                }
+
+                //Переписать скрипт без всяких трансформ позишон и прочьего говна
+                //Всю эту залупу нужно начисто переписывать, говнокод
+
             }
         } // VERSION FOR PC INSERT
 
+
+        //private void Update()
+        //{
+        //    Vector3 position;
+
+        //    if (Input.GetMouseButtonDown(0))
+        //    {
+        //        Debug.Log("1");
+        //        checkPC = true;
+        //    }
+
+        //    if (Input.GetMouseButtonUp(0))
+        //    {
+        //        checkPC = false;
+        //    }
+
+        //    if (checkPC)
+        //    {
+        //        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    }
+        //    else
+        //    {
+        //        return;
+        //    }
+
+        //    position = gameObject.transform.position;
+
+        //    if (Physics.Raycast(ray, out hit) && Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
+        //    {
+        //        Debug.Log("2");
+        //        if (hit.collider.name != gameObject.name) firstTouchFlag = false; // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
+        //        if (hitBottom.collider.name == "Island")
+        //        {
+        //            if (!firstTouchFlag)
+        //            {
+        //                firstFingerPosition = hit.point;
+        //                firstTouchFlag = true;
+        //            }
+        //            else
+        //            {
+        //                secondFingerPosition = hit.point;
+        //                shiftPositionVector = secondFingerPosition - firstFingerPosition;
+        //                shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
+        //                gameObject.transform.position += shiftPositionVector;
+        //                firstFingerPosition = hit.point;
+        //            }
+        //        }
+
+        //    }
+        //} // VERSION FOR PC INSERT
+
+
+        //private void Update()
+        //{
+        //    if (Input.GetMouseButtonDown(0))
+        //    {
+        //        checkPC = true;
+        //    }
+        //    else if (Input.GetMouseButtonUp(0))
+        //    {
+        //        checkPC = false;
+        //    }
+        //    if (checkPC)
+        //    {
+        //        position = Input.mousePosition;
+        //        //touch = Input.mousePosition;
+        //        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //        if (Physics.Raycast(ray, out hit))
+        //        {
+        //            if (hit.collider.name == gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
+        //            {
+        //                position = gameObject.transform.position;
+        //                if (Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
+        //                {
+        //                    if (hitBottom.collider.name == "Island")
+        //                    {
+        //                        if (!firstTouchFlag)
+        //                        {
+        //                            firstFingerPosition = hit.point;
+        //                            firstTouchFlag = true;
+        //                        }
+        //                        else
+        //                        {
+        //                            secondFingerPosition = hit.point;
+        //                            shiftPositionVector = secondFingerPosition - firstFingerPosition;
+        //                            shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
+        //                            gameObject.transform.position += shiftPositionVector;
+        //                            firstFingerPosition = hit.point;
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+
+        //                }
+        //            }
+        //            else
+        //            {
+        //                firstTouchFlag = false;
+        //            }
+
+        //            //Переписать скрипт без всяких трансформ позишон и прочьего говна
+        //            //Всю эту залупу нужно начисто переписывать, говнокод
+
+        //        }
+        //    }
+        //} // VERSION FOR PC INSERT
     }
 
 }
