@@ -9,6 +9,7 @@ namespace BuildSpace
     {
         private Ray ray;
         private RaycastHit hit;
+        private RaycastHit hitBottom;
         private Touch touch;
         // private Input touch;
         //Всю эту залупу нужно начисто переписывать, говнокод
@@ -17,6 +18,8 @@ namespace BuildSpace
 
         private bool firstTouchFlag;
         private bool stopReadingTouch;
+
+        private Vector3 position;
 
         private Vector3 shiftPositionVector;
         private Vector3 secondFingerPosition;
@@ -76,7 +79,7 @@ namespace BuildSpace
             }
             if (checkPC)
             {
-                Vector3 position = Input.mousePosition;
+                position = Input.mousePosition;
                 //touch = Input.mousePosition;
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -84,20 +87,29 @@ namespace BuildSpace
                 {
                     if (hit.collider.name == gameObject.name) // Это что за залупа ? Нужно понять, как работает и нахуя здесь эта проверка
                     {
-
-
-                        if (!firstTouchFlag)
+                        position = gameObject.transform.position;
+                        if (Physics.Raycast(position + transform.up, -Vector3.up, out hitBottom))
                         {
-                            firstFingerPosition = hit.point;
-                            firstTouchFlag = true;
+                            if (hitBottom.collider.name == "Island")
+                            {
+                                if (!firstTouchFlag)
+                                {
+                                    firstFingerPosition = hit.point;
+                                    firstTouchFlag = true;
+                                }
+                                else
+                                {
+                                    secondFingerPosition = hit.point;
+                                    shiftPositionVector = secondFingerPosition - firstFingerPosition;
+                                    shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
+                                    gameObject.transform.position += shiftPositionVector;
+                                    firstFingerPosition = hit.point;
+                                }
+                            }
                         }
                         else
                         {
-                            secondFingerPosition = hit.point;
-                            shiftPositionVector = secondFingerPosition - firstFingerPosition;
-                            shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
-                            gameObject.transform.localPosition += shiftPositionVector;
-                            firstFingerPosition = hit.point;
+
                         }
                     }
                     else
@@ -107,16 +119,6 @@ namespace BuildSpace
 
                     //Переписать скрипт без всяких трансформ позишон и прочьего говна
                     //Всю эту залупу нужно начисто переписывать, говнокод
-                    position = gameObject.transform.localPosition;
-                    Debug.Log("1");
-                    if (Physics.Raycast(position + transform.up, -Vector3.up, out hit))
-                    {
-                        Debug.Log("2");
-                        if (hit.collider.name == "Island")
-                        {
-                            Debug.Log("ZAEBIS");
-                        }
-                    }
 
                 }
             }
