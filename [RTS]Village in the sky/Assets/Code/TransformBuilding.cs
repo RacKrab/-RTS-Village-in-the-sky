@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 namespace BuildSpace
@@ -11,50 +9,54 @@ namespace BuildSpace
         private RaycastHit hit;
         private Touch touch;
 
-        private bool firstTouchFlag;
-        private bool stopReadingTouch;
-
-        private Vector3 shiftPositionVector;
-        private Vector3 secondFingerPosition;
-        private Vector3 firstFingerPosition;
+        private Vector3 hitPosition;
+        private bool firsTouchFlag;
+        private bool checkPC;
 
         private void Start()
         {
-            gameObject.transform.position = new Vector3(0f,0.5f,0f);
+            gameObject.transform.position = new Vector3(0f, 0.5f, 0f);
         }
 
         private void Update()
         {
-            if (Input.touchCount == 1)
             {
-                touch = Input.GetTouch(0);
-                ray = Camera.main.ScreenPointToRay(touch.position);
+                if (Input.GetMouseButtonDown(0)) checkPC = true;
+                if (Input.GetMouseButtonUp(0))
+                {
+                    checkPC = false;
+                    firsTouchFlag = false;
+                }
+                if (!checkPC) return;
+            }
 
+            if (!Physics.Raycast(gameObject.transform.position + transform.up, -Vector3.up))
+            {
+                // gameObject.transform.position -= new Vector3(0.01f * hit.point.x, 0f , 0.01f * hit.point.z);
+                return;
+            }
+
+
+            {
+                Vector3 position = Input.mousePosition;
+                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
                 {
                     if (hit.collider.name == gameObject.name)
                     {
-                        if (!firstTouchFlag)
+                        if (!firsTouchFlag)
                         {
-                            firstFingerPosition = hit.point;
-                            firstTouchFlag = true;
+                            hitPosition = hit.point;
+                            firsTouchFlag = true;
                         }
                         else
                         {
-                            secondFingerPosition = hit.point;
-                            shiftPositionVector = secondFingerPosition - firstFingerPosition;
-                            shiftPositionVector = new Vector3(shiftPositionVector.x, 0f, shiftPositionVector.z);
-                            gameObject.transform.localPosition += shiftPositionVector;
-                            firstFingerPosition = hit.point;
+                            gameObject.transform.position = new Vector3(hit.point.x + gameObject.transform.position.x - hitPosition.x, 0.5f, hit.point.z + gameObject.transform.position.z - hitPosition.z);
+                            hitPosition = hit.point;
                         }
-                    }
-                    else
-                    {
-                        firstTouchFlag = false;
                     }
                 }
             }
         }
     }
-
 }
