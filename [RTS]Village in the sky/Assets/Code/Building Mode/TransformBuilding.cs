@@ -7,19 +7,43 @@ namespace BuildSpace
     {
         private Ray ray;
         private RaycastHit hit;
-        private Touch touch;
-
         private Vector3 hitPosition;
+        private Transform savePosition;
+
         private bool firsTouchFlag;
         private bool checkPC;
+        private float rotation;
 
         private void Start()
         {
             gameObject.transform.position = new Vector3(0f, 0.5f, 0f);
+            savePosition = gameObject.transform;
+            rotation = 0f;
         }
 
         private void Update()
         {
+
+            {
+                if (BuildingController.Rotate == 1)
+                {
+                    rotation -= 30f; // коэффициент поворота
+                    savePosition.localRotation = Quaternion.Euler(0f, rotation, 0f);
+                    BuildingController.Rotate = 0;
+                    checkPC = false;
+                    return;
+                }
+
+                if (BuildingController.Rotate == 2)
+                {
+                    rotation += 30f; // коэффициент поворота
+                    savePosition.localRotation = Quaternion.Euler(0f, rotation, 0f);
+                    BuildingController.Rotate = 0;
+                    checkPC = false;
+                    return;
+                }
+            }
+
             {
                 if (Input.GetMouseButtonDown(0)) checkPC = true;
                 if (Input.GetMouseButtonUp(0))
@@ -30,15 +54,16 @@ namespace BuildSpace
                 if (!checkPC) return;
             }
 
-            if (!Physics.Raycast(gameObject.transform.position + transform.up, -Vector3.up))
             {
-                // gameObject.transform.position -= new Vector3(0.01f * hit.point.x, 0f , 0.01f * hit.point.z);
-                return;
+                if (!Physics.Raycast(savePosition.position + transform.up, -Vector3.up))
+                {
+                    savePosition.position -= new Vector3(0.2f * hit.point.x, 0f, 0.2f * hit.point.z);
+                    return;
+                }
             }
 
 
             {
-                Vector3 position = Input.mousePosition;
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
                 {
@@ -51,7 +76,7 @@ namespace BuildSpace
                         }
                         else
                         {
-                            gameObject.transform.position = new Vector3(hit.point.x + gameObject.transform.position.x - hitPosition.x, 0.5f, hit.point.z + gameObject.transform.position.z - hitPosition.z);
+                            savePosition.position = new Vector3(hit.point.x + savePosition.position.x - hitPosition.x, 0.5f, hit.point.z + savePosition.position.z - hitPosition.z);
                             hitPosition = hit.point;
                         }
                     }
