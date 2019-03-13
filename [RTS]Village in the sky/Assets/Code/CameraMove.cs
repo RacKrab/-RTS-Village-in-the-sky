@@ -27,11 +27,8 @@ public class CameraMove : MonoBehaviour
 
     private bool IsMove;
 
-   // private Vector2 currentPosition;
-
     private Vector2 deltaVector;
 
-    // Use this for initialization
     void Start()
     {
         cam = gameObject.GetComponent<Camera>();
@@ -46,7 +43,6 @@ public class CameraMove : MonoBehaviour
     }
 
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -56,8 +52,6 @@ public class CameraMove : MonoBehaviour
             zPosition = Input.mousePosition.y;
             xPosition = Input.mousePosition.x;
             return;
-
-            //currentPosition = Input.mousePosition;
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -70,8 +64,6 @@ public class CameraMove : MonoBehaviour
             zDeltaPosition = zPosition - Input.mousePosition.y;
             xDeltaPosition = xPosition - Input.mousePosition.x;
 
-            //Debug.Log(zDeltaPosition + "///" + xDeltaPosition);
-
             zLocalPosition = zDeltaPosition;
             xLocalPosition = xDeltaPosition;
 
@@ -80,25 +72,11 @@ public class CameraMove : MonoBehaviour
 
 
 
-            //zDeltaPosition *=0.05f;
             zDeltaPosition = ((zLocalPosition * Mathf.Cos(rad)) - (xLocalPosition * Mathf.Sin(rad))) * Time.deltaTime;
-            // Debug.Log("rotation" + rad + "sin" + Mathf.Sin(rad));
-            Debug.Log(rad);
             xDeltaPosition = ((xLocalPosition * Mathf.Cos(rad)) + (zLocalPosition * Mathf.Sin(rad))) * Time.deltaTime;
 
-            //Debug.Log(zDeltaPosition + "|" + xDeltaPosition);
-            //zDeltaPosition = ((xDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
-            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation)) + (xDeltaPosition * Mathf.Sin(rotation))) * Time.deltaTime;
-            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
-
-            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
-
-
-
-            //deltaVector = currentPosition - (Vector2)Input.mousePosition;
-            //Debug.Log(deltaVector);
             cam.transform.localPosition = new Vector3(cam.transform.localPosition.x + xDeltaPosition, cam.transform.localPosition.y, cam.transform.localPosition.z + zDeltaPosition);
-            //currentPosition = Input.mousePosition;
+
             zPosition = Input.mousePosition.y;
             xPosition = Input.mousePosition.x;
 
@@ -112,11 +90,6 @@ public class CameraMove : MonoBehaviour
         if (!Side)rotation -= 90f;
         if (rotation > 360) rotation -= 360;
         if (rotation < 0) rotation += 360;
-        //Debug.Log(rotation);
-
-        //rotation = rotation*100;
-        //rotation = (int)rotation;
-        //rotation = rotation / 100;
 
         Debug.Log(rotation);
 
