@@ -51,8 +51,8 @@ public class CameraMove : MonoBehaviour
         {
             IsMove = true;
 
-            zPosition = Input.mousePosition.x;
-            xPosition = Input.mousePosition.y;
+            zPosition = Input.mousePosition.y;
+            xPosition = Input.mousePosition.x;
             return;
 
             //currentPosition = Input.mousePosition;
@@ -65,8 +65,8 @@ public class CameraMove : MonoBehaviour
 
         if(IsMove)
         {
-            zDeltaPosition = zPosition - Input.mousePosition.x;
-            xDeltaPosition = xPosition - Input.mousePosition.y;
+            zDeltaPosition = zPosition - Input.mousePosition.y;
+            xDeltaPosition = xPosition - Input.mousePosition.x;
 
             Debug.Log(zDeltaPosition + "///" + xDeltaPosition);
 
@@ -76,8 +76,8 @@ public class CameraMove : MonoBehaviour
 
 
             //zDeltaPosition *=0.05f;
-            zDeltaPosition = ((zLocalPosition * Mathf.Sin(360 - rotation)) + (xLocalPosition * Mathf.Cos(rotation))) * Time.deltaTime * 4f;
-            xDeltaPosition = ((xLocalPosition * Mathf.Sin(rotation - 360)) + (zLocalPosition * Mathf.Cos(rotation))) * Time.deltaTime * 4f;
+            zDeltaPosition = ((zLocalPosition * Mathf.Cos(rotation)) - (xLocalPosition * Mathf.Sin(rotation))) * Time.deltaTime;
+            xDeltaPosition = ((xLocalPosition * Mathf.Cos(rotation)) + (zLocalPosition * Mathf.Sin(rotation))) * Time.deltaTime;
             //zDeltaPosition = ((xDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
             //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation)) + (xDeltaPosition * Mathf.Sin(rotation))) * Time.deltaTime;
             //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
@@ -90,8 +90,8 @@ public class CameraMove : MonoBehaviour
             //Debug.Log(deltaVector);
             cam.transform.position = new Vector3(cam.transform.position.x + xDeltaPosition, cam.transform.position.y, cam.transform.position.z + zDeltaPosition);
             //currentPosition = Input.mousePosition;
-            zPosition = Input.mousePosition.x;
-            xPosition = Input.mousePosition.y;
+            zPosition = Input.mousePosition.y;
+            xPosition = Input.mousePosition.x;
 
 
         }
