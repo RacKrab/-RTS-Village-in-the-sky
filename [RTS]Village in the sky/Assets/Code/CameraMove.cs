@@ -17,6 +17,9 @@ public class CameraMove : MonoBehaviour
     private float xPosition;
     private float zPosition;
 
+    private float xLocalPosition;
+    private float zLocalPosition;
+
     private float zDeltaPosition;
     private float xDeltaPosition;
 
@@ -50,6 +53,7 @@ public class CameraMove : MonoBehaviour
 
             zPosition = Input.mousePosition.x;
             xPosition = Input.mousePosition.y;
+            return;
 
             //currentPosition = Input.mousePosition;
         }
@@ -64,14 +68,27 @@ public class CameraMove : MonoBehaviour
             zDeltaPosition = zPosition - Input.mousePosition.x;
             xDeltaPosition = xPosition - Input.mousePosition.y;
 
-            zDeltaPosition = zDeltaPosition * 1/(1 - (defaultRotaton - zRotation));
-            xDeltaPosition = xDeltaPosition * 1/(1 - (defaultRotaton - xRotation));
+            Debug.Log(zDeltaPosition + "///" + xDeltaPosition);
+
+            zLocalPosition = zDeltaPosition;
+            xLocalPosition = xDeltaPosition;
+
+
+
+            //zDeltaPosition *=0.05f;
+            zDeltaPosition = ((zLocalPosition * Mathf.Sin(360 - rotation)) + (xLocalPosition * Mathf.Cos(rotation))) * Time.deltaTime * 4f;
+            xDeltaPosition = ((xLocalPosition * Mathf.Sin(rotation - 360)) + (zLocalPosition * Mathf.Cos(rotation))) * Time.deltaTime * 4f;
+            //zDeltaPosition = ((xDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
+            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation)) + (xDeltaPosition * Mathf.Sin(rotation))) * Time.deltaTime;
+            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
+
+            //xDeltaPosition = ((zDeltaPosition * Mathf.Cos(rotation))) * Time.deltaTime;
 
 
 
             //deltaVector = currentPosition - (Vector2)Input.mousePosition;
-            Debug.Log(deltaVector);
-            cam.transform.position = new Vector3(cam.transform.position.x + xDeltaPosition*0.1f,cam.transform.position.y, cam.transform.position.z + zDeltaPosition * 0.1f);
+            //Debug.Log(deltaVector);
+            cam.transform.position = new Vector3(cam.transform.position.x + xDeltaPosition, cam.transform.position.y, cam.transform.position.z + zDeltaPosition);
             //currentPosition = Input.mousePosition;
             zPosition = Input.mousePosition.x;
             xPosition = Input.mousePosition.y;
@@ -82,18 +99,18 @@ public class CameraMove : MonoBehaviour
 
     public void Rotate(bool Side) // true - rotate to right // false - rotate to left
     {
-        if (Side)
-        {
+        if (Side)rotation += 30f;
+        if (!Side)rotation -= 30f;
+        if (rotation > 360) rotation -= 360;
+        if (rotation < 0) rotation += 360;
+        //Debug.Log(rotation);
 
-            rotation += 30f;
-            cam.transform.rotation = Quaternion.Euler(xRotation, rotation, zRotation);
-            return;
-        }
-        if (!Side)
-        {
-            rotation -= 30f;
-            cam.transform.rotation = Quaternion.Euler(xRotation, rotation, zRotation);
-            return;
-        }
+        //rotation = rotation*100;
+        //rotation = (int)rotation;
+        //rotation = rotation / 100;
+
+        Debug.Log(rotation);
+
+        cam.transform.rotation = Quaternion.Euler(xRotation, rotation, zRotation);
     }
 }
