@@ -1,47 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
+    private Transform camPosition;
 
-    private Camera cam;
+    private Vector3 transformCamPosition;
 
-    private float defaultRotaton;
-
-    private float rotation;
-
-    private float rad;
-
-    private float xRotation;
-    private float zRotation;
-
-    private float xPosition;
-    private float zPosition;
-
-    private float xLocalPosition;
-    private float zLocalPosition;
-
-    private float zDeltaPosition;
-    private float xDeltaPosition;
+    private float xRotation, yRotation, zRotation;
+    private float xChangePosition, zChangePosition; // Координаты, перенесенные в систему координат
+    private float xRatio, zRatio; //Скорость изменения координат
 
     private bool IsMove;
 
-    private Vector2 deltaVector;
-
     void Start()
     {
-        cam = gameObject.GetComponent<Camera>();
+        transformCamPosition = new Vector3();
 
+        camPosition = gameObject.GetComponent<Camera>().transform;
 
-
-        xRotation = cam.transform.rotation.eulerAngles.x;
-        zRotation = cam.transform.rotation.eulerAngles.z;
-        rotation = cam.transform.rotation.eulerAngles.y;
-        defaultRotaton = cam.transform.rotation.eulerAngles.y;
-
+        xRotation = gameObject.GetComponent<Camera>().transform.rotation.eulerAngles.x;
+        yRotation = gameObject.GetComponent<Camera>().transform.rotation.eulerAngles.y;
+        zRotation = gameObject.GetComponent<Camera>().transform.rotation.eulerAngles.z;
     }
-
 
     void Update()
     {
@@ -49,50 +29,42 @@ public class CameraMove : MonoBehaviour
         {
             IsMove = true;
 
-            zPosition = Input.mousePosition.y;
-            xPosition = Input.mousePosition.x;
+            zRatio = Input.mousePosition.y;
+            xRatio = Input.mousePosition.x;
+
             return;
         }
-
-        if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0))
         {
             IsMove = false;
         }
-
-        if(IsMove)
+        else if (IsMove)
         {
-            zDeltaPosition = zPosition - Input.mousePosition.y;
-            xDeltaPosition = xPosition - Input.mousePosition.x;
+            xRatio -= Input.mousePosition.x;
+            zRatio -= Input.mousePosition.y;
 
-            zLocalPosition = zDeltaPosition;
-            xLocalPosition = xDeltaPosition;
+            float rad = (yRotation * 3.1415f) / 180f;
 
-            rad = rotation * 3.1415f;
-            rad = rad / 180;
+            xChangePosition = ((xRatio * Mathf.Cos(rad)) + (zRatio * Mathf.Sin(rad))) * Time.deltaTime;
+            zChangePosition = ((zRatio * Mathf.Cos(rad)) - (xRatio * Mathf.Sin(rad))) * Time.deltaTime;
 
+            transformCamPosition.x = camPosition.localPosition.x + xChangePosition;
+            transformCamPosition.y = camPosition.localPosition.y;
+            transformCamPosition.z = camPosition.localPosition.z + zChangePosition;
 
+            camPosition.localPosition = transformCamPosition;
 
-            zDeltaPosition = ((zLocalPosition * Mathf.Cos(rad)) - (xLocalPosition * Mathf.Sin(rad))) * Time.deltaTime;
-            xDeltaPosition = ((xLocalPosition * Mathf.Cos(rad)) + (zLocalPosition * Mathf.Sin(rad))) * Time.deltaTime;
-
-            cam.transform.localPosition = new Vector3(cam.transform.localPosition.x + xDeltaPosition, cam.transform.localPosition.y, cam.transform.localPosition.z + zDeltaPosition);
-
-            zPosition = Input.mousePosition.y;
-            xPosition = Input.mousePosition.x;
-
-
+            xRatio = Input.mousePosition.x;
+            zRatio = Input.mousePosition.y;
         }
     }
 
     public void Rotate(bool Side) // true - rotate to right // false - rotate to left
     {
-        if (Side)rotation += 90f;
-        if (!Side)rotation -= 90f;
-        if (rotation > 360) rotation -= 360;
-        if (rotation < 0) rotation += 360;
+        /*Этот скрипт нужно будет переписать, пока это просто заглушка*/
+        if (Side) yRotation += 45f;
+        if (!Side) yRotation -= 45f;
 
-        Debug.Log(rotation);
-
-        cam.transform.rotation = Quaternion.Euler(xRotation, rotation, zRotation);
+        camPosition.rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
     }
 }
