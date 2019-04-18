@@ -16,7 +16,7 @@ namespace BuildSpace
 
         private void Start()
         {
-            gameObject.transform.position = new Vector3(0f, 0.5f, 0f);
+            //gameObject.transform.position = new Vector3(0f, 0.5f, 0f);
             savePosition = gameObject.transform;
             rotation = 0f;
         }
@@ -27,7 +27,7 @@ namespace BuildSpace
             {
                 if (BuildingController.Rotate == 1)
                 {
-                    rotation -= 30f; // коэффициент поворота
+                    rotation -= 90f; // коэффициент поворота
                     savePosition.localRotation = Quaternion.Euler(0f, rotation, 0f);
                     BuildingController.Rotate = 0;
                     checkPC = false;
@@ -36,7 +36,7 @@ namespace BuildSpace
 
                 if (BuildingController.Rotate == 2)
                 {
-                    rotation += 30f; // коэффициент поворота
+                    rotation += 90f; // коэффициент поворота
                     savePosition.localRotation = Quaternion.Euler(0f, rotation, 0f);
                     BuildingController.Rotate = 0;
                     checkPC = false;

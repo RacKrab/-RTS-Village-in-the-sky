@@ -8,10 +8,13 @@ namespace BuildSpace
     public class ReBakeNavMesh : MonoBehaviour
     {
         private NavMeshSurface _navmeshsurface;
+        public static bool ReBake { get; set; }
 
         void Start()
         {
             _navmeshsurface = gameObject.GetComponent<NavMeshSurface>();
+            _navmeshsurface.RemoveData();
+            _navmeshsurface.BuildNavMesh();
         }
 
         void Update()
@@ -21,6 +24,7 @@ namespace BuildSpace
                 _navmeshsurface.RemoveData();
                 _navmeshsurface.BuildNavMesh();
                 BuildingController.Status = 255;
+                ReBake = true;
             }
         }
     }
